@@ -12,12 +12,6 @@ Update the package repository.
 sudo apt update
 ```
 
-Upgrade installed packages.
-
-``` bash
-sudo apt upgrade -y
-```
-
 ------------------------------------------------------------------------
 
 ## Step 2: Install Required Packages
@@ -60,12 +54,6 @@ Check the installed version.
 suricata --version
 ```
 
-or
-
-``` bash
-suricata --build-info
-```
-
 ------------------------------------------------------------------------
 
 ## Step 6: Update Detection Rules
@@ -95,7 +83,9 @@ ip route
 Example:
 
 ``` text
-default via 192.168.1.1 dev ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+link/ether 00:11:22:33:44:55 brd ff:ff:ff:ff:ff:ff
+inet 10.0.0.23/24 brd 10.23.0.255 scope global noprefixroute ens33
 ```
 
 The active interface is:
@@ -122,7 +112,24 @@ sudo nano /etc/suricata/suricata.yaml
 
 ------------------------------------------------------------------------
 
-## Step 10: Configure AF_PACKET
+## Step 10: Configure HOME_NET
+
+ ```yaml
+ address-groups:
+    HOME_NET: "[UBUNTU-IP]"
+    #HOME_NET: "[192.168.0.0/16]"
+    #HOME_NET: "[10.0.0.0/8]"
+    #HOME_NET: "[172.16.0.0/12]"
+    #HOME_NET: "any"
+
+    EXTERNAL_NET: "!$HOME_NET"
+    #EXTERNAL_NET: "any"
+ ```
+
+
+------------------------------------------------------------------------
+
+## Step 11: Configure AF_PACKET
 
 Locate the `af-packet:` section and configure it.
 
@@ -136,9 +143,26 @@ af-packet:
 
 Replace `ens33` with your active network interface.
 
+If you want to use multiple interfaces, add one entry per interface.
+
+``` yaml
+af-packet:
+  - interface: ens33
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+
+  - interface: ens34
+    cluster-id: 100
+    cluster-type: cluster_flow
+    defrag: yes
+```
+
+Use a unique `cluster-id` for each interface entry.
+
 ------------------------------------------------------------------------
 
-## Step 11: Enable EVE JSON Logging
+## Step 12: Enable EVE JSON Logging
 
 Locate the `outputs:` section.
 
@@ -155,7 +179,7 @@ outputs:
 
 ------------------------------------------------------------------------
 
-## Step 12: Validate the Configuration
+## Step 13: Validate the Configuration
 
 ``` bash
 sudo suricata -T -c /etc/suricata/suricata.yaml
@@ -163,7 +187,7 @@ sudo suricata -T -c /etc/suricata/suricata.yaml
 
 ------------------------------------------------------------------------
 
-## Step 13: Enable the Suricata Service
+## Step 14: Enable the Suricata Service
 
 ``` bash
 sudo systemctl enable suricata
@@ -171,7 +195,7 @@ sudo systemctl enable suricata
 
 ------------------------------------------------------------------------
 
-## Step 14: Restart the Suricata Service
+## Step 15: Restart the Suricata Service
 
 ``` bash
 sudo systemctl restart suricata
@@ -179,7 +203,7 @@ sudo systemctl restart suricata
 
 ------------------------------------------------------------------------
 
-## Step 15: Check the Suricata Service Status
+## Step 16: Check the Suricata Service Status
 
 ``` bash
 sudo systemctl status suricata
@@ -187,7 +211,7 @@ sudo systemctl status suricata
 
 ------------------------------------------------------------------------
 
-## Step 16: Verify Suricata Log Files
+## Step 17: Verify Suricata Log Files
 
 List the generated log files.
 
@@ -203,7 +227,7 @@ sudo tail -f /var/log/suricata/eve.json
 
 ------------------------------------------------------------------------
 
-## Step 17: Backup the Wazuh Agent Configuration
+## Step 18: Backup the Wazuh Agent Configuration
 
 ``` bash
 sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
@@ -211,7 +235,7 @@ sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
 
 ------------------------------------------------------------------------
 
-## Step 18: Edit the Wazuh Agent Configuration
+## Step 19: Edit the Wazuh Agent Configuration
 
 ``` bash
 sudo nano /var/ossec/etc/ossec.conf
@@ -219,7 +243,7 @@ sudo nano /var/ossec/etc/ossec.conf
 
 ------------------------------------------------------------------------
 
-## Step 19: Add the Suricata Log Configuration
+## Step 20: Add the Suricata Log Configuration
 
 Add the following block inside the `<ossec_config>` section.
 
@@ -232,7 +256,7 @@ Add the following block inside the `<ossec_config>` section.
 
 ------------------------------------------------------------------------
 
-## Step 20: Restart the Wazuh Agent
+## Step 21: Restart the Wazuh Agent
 
 ``` bash
 sudo systemctl restart wazuh-agent
@@ -240,7 +264,7 @@ sudo systemctl restart wazuh-agent
 
 ------------------------------------------------------------------------
 
-## Step 21: Verify the Wazuh Agent Status
+## Step 22: Verify the Wazuh Agent Status
 
 ``` bash
 sudo systemctl status wazuh-agent
@@ -248,7 +272,7 @@ sudo systemctl status wazuh-agent
 
 ------------------------------------------------------------------------
 
-## Step 22: Generate Test Traffic
+## Step 23: Generate Test Traffic
 
 Generate HTTP traffic.
 
@@ -264,7 +288,7 @@ curl https://google.com
 
 ------------------------------------------------------------------------
 
-## Step 23: Verify Suricata Events
+## Step 24: Verify Suricata Events
 
 Display the latest events.
 
@@ -274,7 +298,7 @@ sudo tail -50 /var/log/suricata/eve.json
 
 ------------------------------------------------------------------------
 
-## Step 24: Useful Commands
+## Step 25: Useful Commands
 
 Check the installed version.
 
