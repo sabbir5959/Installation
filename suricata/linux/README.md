@@ -71,13 +71,13 @@ sudo suricata-update
 Display all interfaces.
 
 ``` bash
-ip addr
+sudo ip addr
 ```
 
 or
 
 ``` bash
-ip route
+sudo ip route
 ```
 
 Example:
@@ -237,7 +237,7 @@ sudo systemctl status suricata
 List the generated log files.
 
 ``` bash
-ls -lah /var/log/suricata/
+sudo ls -lah /var/log/suricata/
 ```
 
 Monitor events in real time.
