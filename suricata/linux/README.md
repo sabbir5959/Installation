@@ -126,10 +126,22 @@ sudo nano /etc/suricata/suricata.yaml
     #EXTERNAL_NET: "any"
  ```
 
+------------------------------------------------------------------------
+
+## Step 11: Set rule-path direction
+
+Locate the `rule-path:` section and edit it
+
+ ```yaml
+ default-rule-path: /etc/suricata/rules
+
+ rule-files:
+  - "*.rules"
+ ```
 
 ------------------------------------------------------------------------
 
-## Step 11: Configure AF_PACKET
+## Step 12: Configure AF_PACKET
 
 Locate the `af-packet:` section and configure it.
 
@@ -162,7 +174,7 @@ Use a unique `cluster-id` for each interface entry.
 
 ------------------------------------------------------------------------
 
-## Step 12: Enable EVE JSON Logging
+## Step 13: Enable EVE JSON Logging
 
 Locate the `outputs:` section.
 
@@ -179,7 +191,7 @@ outputs:
 
 ------------------------------------------------------------------------
 
-## Step 13: Validate the Configuration
+## Step 14: Validate the Configuration
 
 ``` bash
 sudo suricata -T -c /etc/suricata/suricata.yaml
@@ -187,7 +199,7 @@ sudo suricata -T -c /etc/suricata/suricata.yaml
 
 ------------------------------------------------------------------------
 
-## Step 14: Enable the Suricata Service
+## Step 15: Enable the Suricata Service
 
 ``` bash
 sudo systemctl enable suricata
@@ -195,7 +207,7 @@ sudo systemctl enable suricata
 
 ------------------------------------------------------------------------
 
-## Step 15: Restart the Suricata Service
+## Step 16: Restart the Suricata Service
 
 ``` bash
 sudo systemctl restart suricata
@@ -203,7 +215,7 @@ sudo systemctl restart suricata
 
 ------------------------------------------------------------------------
 
-## Step 16: Check the Suricata Service Status
+## Step 17: Check the Suricata Service Status
 
 ``` bash
 sudo systemctl status suricata
@@ -211,7 +223,7 @@ sudo systemctl status suricata
 
 ------------------------------------------------------------------------
 
-## Step 17: Verify Suricata Log Files
+## Step 18: Verify Suricata Log Files
 
 List the generated log files.
 
@@ -227,7 +239,7 @@ sudo tail -f /var/log/suricata/eve.json
 
 ------------------------------------------------------------------------
 
-## Step 18: Backup the Wazuh Agent Configuration
+## Step 19: Backup the Wazuh Agent Configuration
 
 ``` bash
 sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
@@ -235,7 +247,7 @@ sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
 
 ------------------------------------------------------------------------
 
-## Step 19: Edit the Wazuh Agent Configuration
+## Step 20: Edit the Wazuh Agent Configuration
 
 ``` bash
 sudo nano /var/ossec/etc/ossec.conf
@@ -243,7 +255,7 @@ sudo nano /var/ossec/etc/ossec.conf
 
 ------------------------------------------------------------------------
 
-## Step 20: Add the Suricata Log Configuration
+## Step 21: Add the Suricata Log Configuration
 
 Add the following block inside the `<ossec_config>` section.
 
@@ -256,7 +268,7 @@ Add the following block inside the `<ossec_config>` section.
 
 ------------------------------------------------------------------------
 
-## Step 21: Restart the Wazuh Agent
+## Step 22: Restart the Wazuh Agent
 
 ``` bash
 sudo systemctl restart wazuh-agent
@@ -264,7 +276,7 @@ sudo systemctl restart wazuh-agent
 
 ------------------------------------------------------------------------
 
-## Step 22: Verify the Wazuh Agent Status
+## Step 23: Verify the Wazuh Agent Status
 
 ``` bash
 sudo systemctl status wazuh-agent
@@ -272,7 +284,7 @@ sudo systemctl status wazuh-agent
 
 ------------------------------------------------------------------------
 
-## Step 23: Generate Test Traffic
+## Step 24: Generate Test Traffic
 
 Generate HTTP traffic.
 
@@ -288,7 +300,7 @@ curl https://google.com
 
 ------------------------------------------------------------------------
 
-## Step 24: Verify Suricata Events
+## Step 25: Verify Suricata Events
 
 Display the latest events.
 
@@ -298,7 +310,7 @@ sudo tail -50 /var/log/suricata/eve.json
 
 ------------------------------------------------------------------------
 
-## Step 25: Useful Commands
+## Step 26: Useful Commands
 
 Check the installed version.
 
