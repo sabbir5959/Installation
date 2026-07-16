@@ -4,6 +4,19 @@
 
 ------------------------------------------------------------------------
 
+## Overview
+
+This guide covers:
+
+1. Install Suricata
+2. Configure network monitoring
+3. Install Emerging Threats Open rules
+4. Enable EVE JSON logging
+5. Integrate Suricata with Wazuh Agent
+6. Verify alerts on Wazuh Manager
+
+---
+
 ## Step 1: Update the System
 
 Update the package repository.
