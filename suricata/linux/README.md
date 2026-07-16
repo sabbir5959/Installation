@@ -19,7 +19,7 @@ sudo apt update
 Install required dependencies.
 
 ``` bash
-sudo apt install software-properties-common jq curl -y
+sudo apt install -y software-properties-common curl wget gnupg lsb-release ca-certificates jq
 ```
 
 ------------------------------------------------------------------------
@@ -56,13 +56,25 @@ suricata --version
 
 ------------------------------------------------------------------------
 
-## Step 6: Update Detection Rules
+## 6. Update Rule Sources
 
-Download the latest Emerging Threats rules.
-
-``` bash
+```bash
+sudo suricata-update update-sources
+sudo suricata-update enable-source et/open
 sudo suricata-update
+sudo suricata-update list-enabled-sources
 ```
+------------------------------------------------------------------------
+
+## 7. Verify Rules
+
+```bash
+sudo suricata -T -c /etc/suricata/suricata.yaml
+```
+
+Expected:
+- Configuration provided was successfully loaded.
+- 52000+ rules successfully loaded
 
 ------------------------------------------------------------------------
 
@@ -70,14 +82,14 @@ sudo suricata-update
 
 Display all interfaces.
 
-``` bash
-sudo ip addr
+```bash
+ip -br addr
 ```
 
 or
 
-``` bash
-sudo ip route
+```bash
+ip link show
 ```
 
 Example:
@@ -125,6 +137,7 @@ sudo nano /etc/suricata/suricata.yaml
     EXTERNAL_NET: "!$HOME_NET"
     #EXTERNAL_NET: "any"
  ```
+Replace the subnet if your environment uses a different network.
 
 ------------------------------------------------------------------------
 
@@ -179,19 +192,22 @@ outputs:
 
 ------------------------------------------------------------------------
 
+## 13. Enable Service
+
+```bash
+sudo systemctl enable --now suricata
+sudo systemctl restart suricata
+sudo systemctl status suricata
+```
+
+------------------------------------------------------------------------
+
 ## Step 13: Validate the Configuration
 
 ``` bash
 sudo suricata -T -c /etc/suricata/suricata.yaml
 ```
 
-------------------------------------------------------------------------
-
-## Step 14: Enable the Suricata Service
-
-``` bash
-sudo systemctl enable suricata
-```
 ------------------------------------------------------------------------
 
 ## Step 15: Edit the Suricata Rule Path
@@ -213,6 +229,7 @@ Locate the `rule-path:` section and edit it
   - "*.rules"
  ```
 
+<!-- By recommending this path, if you select it and open the rules directory there, any rules you create later will be saved inside it. This keeps all rule files together in one place. -->
 
 ------------------------------------------------------------------------
 
@@ -220,13 +237,6 @@ Locate the `rule-path:` section and edit it
 
 ``` bash
 sudo systemctl restart suricata
-```
-
-------------------------------------------------------------------------
-
-## Step 18: Check the Suricata Service Status
-
-``` bash
 sudo systemctl status suricata
 ```
 
@@ -237,23 +247,27 @@ sudo systemctl status suricata
 List the generated log files.
 
 ``` bash
-sudo ls -lah /var/log/suricata/
-```
-
-Monitor events in real time.
-
-``` bash
+sudo ls -lh /var/log/suricata
 sudo tail -f /var/log/suricata/eve.json
 ```
 
 ------------------------------------------------------------------------
 
-## Step 20: Backup the Wazuh Agent Configuration
+## 15. Generate Test Traffic
 
-``` bash
-sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
+```bash
+curl http://testmynids.org/uid/index.html
 ```
 
+------------------------------------------------------------------------
+
+## 17. Wazuh Integration
+
+Backup:
+
+```bash
+sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.bak
+```
 ------------------------------------------------------------------------
 
 ## Step 21: Edit the Wazuh Agent Configuration
@@ -319,52 +333,14 @@ sudo tail -50 /var/log/suricata/eve.json
 
 ------------------------------------------------------------------------
 
-## Step 27: Useful Commands
+## Useful Commands
 
-Check the installed version.
-
-``` bash
+```bash
 suricata --version
-```
-
-Display build information.
-
-``` bash
 suricata --build-info
-```
-
-Restart the Suricata service.
-
-``` bash
-sudo systemctl restart suricata
-```
-
-Check the Suricata service.
-
-``` bash
-sudo systemctl status suricata
-```
-
-Restart the Wazuh Agent.
-
-``` bash
-sudo systemctl restart wazuh-agent
-```
-
-Check the Wazuh Agent.
-
-``` bash
-sudo systemctl status wazuh-agent
-```
-
-Monitor the Suricata log.
-
-``` bash
-sudo tail -f /var/log/suricata/eve.json
-```
-
-Validate the configuration.
-
-``` bash
 sudo suricata -T -c /etc/suricata/suricata.yaml
+sudo systemctl status suricata
+sudo systemctl restart suricata
+sudo systemctl restart wazuh-agent
+sudo tail -f /var/log/suricata/eve.json
 ```
